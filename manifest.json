@@ -1,0 +1,26 @@
+{
+    "name": "Bichinhos Virtuais",
+    "short_name": "Bichinhos",
+    "description": "Cuide do seu bichinho virtual neste simulador pixel-art!",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#f5efe6",
+    "theme_color": "#ff8c42",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23ff8c42'/><text x='32' y='44' text-anchor='middle' font-size='36'>🐾</text></svg>",
+            "sizes": "64x64",
+            "type": "image/svg+xml"
+        },
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%23ff8c42'/><text x='96' y='130' text-anchor='middle' font-size='100'>🐾</text></svg>",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+        },
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23ff8c42'/><text x='256' y='350' text-anchor='middle' font-size='280'>🐾</text></svg>",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
+        }
+    ]
+}

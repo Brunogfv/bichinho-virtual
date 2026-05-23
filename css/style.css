@@ -1,0 +1,971 @@
+/* ── RESET & BASE ─────────────────────────────────── */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+}
+
+:root {
+    --bg: #f5efe6;
+    --card: #fffdf8;
+    --border: #e8ddd0;
+    --shadow: rgba(180, 150, 120, .12);
+    --text: #3d2c1e;
+    --muted: #9e8878;
+    --accent: #ff8c42;
+    --tick: 400ms;
+}
+
+body {
+    background: var(--bg);
+    font-family: 'Nunito', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 12px 40px;
+}
+
+/* ── HEADER ───────────────────────────────────────── */
+.app-header {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.app-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--text);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.app-sub {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* ── TELA PRINCIPAL (aparelho) ────────────────────── */
+.device {
+    width: 100%;
+    max-width: 380px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 32px;
+    box-shadow: 0 8px 32px var(--shadow), 0 2px 0 var(--border);
+    overflow: hidden;
+    position: relative;
+}
+
+/* ── SCREEN ───────────────────────────────────────── */
+.screen {
+    background: #1a1a2e;
+    margin: 20px 20px 0;
+    border-radius: 16px;
+    border: 3px solid #0d0d1a;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, .5);
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Event Log inside screen */
+.event-log {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    z-index: 15;
+    padding: 4px;
+    font-size: 6.5px;
+    font-family: 'Press Start 2P', monospace;
+    color: #aaa;
+    overflow: hidden;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 2px;
+}
+
+.log-entry {
+    opacity: 0.8;
+    animation: logFadeIn 0.3s ease;
+}
+
+@keyframes logFadeIn {
+    from { opacity: 0; transform: translateX(-5px); }
+    to { opacity: 0.8; transform: translateX(0); }
+}
+
+.screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .02), rgba(255, 255, 255, .02) 1px, transparent 1px, transparent 3px);
+    z-index: 10;
+}
+
+.screen-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 13px;
+    background: radial-gradient(ellipse at 50% 0%, var(--pet-glow, rgba(100, 200, 100, .08)) 0%, transparent 70%);
+    z-index: 9;
+    transition: background 1s;
+}
+
+/* Pet display inside screen */
+.pet-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 50px 12px 10px;
+    position: relative;
+    z-index: 11;
+}
+
+.pet-sprite {
+    image-rendering: pixelated;
+    transition: transform .1s;
+    filter: drop-shadow(0 4px 12px var(--pet-glow, rgba(100, 200, 100, .4)));
+}
+
+.pet-sprite svg {
+    display: block;
+}
+
+.pet-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--pet-color, #6bcb77);
+    letter-spacing: 1px;
+}
+
+.pet-stage-badge {
+    font-size: 11px;
+    color: #555577;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+}
+
+/* Status bars on screen */
+.status-bars {
+    width: 100%;
+    padding: 0 14px 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    position: relative;
+    z-index: 11;
+}
+
+.bar-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.bar-icon {
+    font-size: 11px;
+    width: 16px;
+    text-align: center;
+}
+
+.bar-track {
+    flex: 1;
+    height: 5px;
+    background: #2a2a50;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .5s ease;
+}
+
+.bar-val {
+    font-size: 9px;
+    color: #555577;
+    width: 22px;
+    text-align: right;
+    font-family: monospace;
+}
+
+/* Floating notifications */
+.notif-area {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+}
+
+.notif {
+    background: rgba(255, 255, 255, .12);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, .15);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 11px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6.5px;
+    white-space: nowrap;
+    animation: notifIn .3s ease, notifOut .4s ease 2.2s forwards;
+    line-height: 1.4;
+}
+
+.notif.danger {
+    border-color: rgba(255, 100, 100, .4);
+    color: #ff9999;
+}
+
+.notif.warn {
+    border-color: rgba(255, 200, 100, .4);
+    color: #ffcc88;
+}
+
+.notif.good {
+    border-color: rgba(100, 220, 100, .4);
+    color: #88ee99;
+}
+
+.notif.evolve {
+    border-color: rgba(200, 180, 255, .5);
+    color: #ccbbff;
+    font-size: 7.5px;
+}
+
+@keyframes notifIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px)
+    }
+
+    to {
+        opacity: 1;
+        transform: none
+    }
+}
+
+@keyframes notifOut {
+    to {
+        opacity: 0;
+        transform: translateY(-8px)
+    }
+}
+
+/* Sleep ZZZ overlay */
+.zzz {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    z-index: 15;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: #8080cc;
+    pointer-events: none;
+    animation: floatZzz 2s ease-in-out infinite;
+}
+
+@keyframes floatZzz {
+    0% {
+        opacity: 0;
+        transform: translateY(0)
+    }
+
+    30% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-20px)
+    }
+}
+
+/* Sparkles overlay */
+.sparkles {
+    position: absolute;
+    inset: 0;
+    z-index: 14;
+    pointer-events: none;
+    display: none;
+}
+
+.sparkles.active {
+    display: block;
+}
+
+.sparkle {
+    position: absolute;
+    font-size: 14px;
+    animation: sparkleAnim 1s ease forwards;
+}
+
+@keyframes sparkleAnim {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(0deg)
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(20deg)
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(.5) rotate(40deg) translateY(-20px)
+    }
+}
+
+/* ── CONTROLES ────────────────────────────────────── */
+.controls {
+    padding: 16px 20px 20px;
+}
+
+.controls-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.btn-action {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 4px;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Press Start 2P', monospace;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-action:hover:not(:disabled) {
+    border-color: var(--pet-color, #6bcb77);
+    background: var(--card);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.btn-action:active:not(:disabled) {
+    transform: translateY(0) scale(.97);
+}
+
+.btn-action:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.btn-icon {
+    font-size: 20px;
+}
+
+.btn-label {
+    font-size: 5.5px;
+    color: var(--muted);
+}
+
+.btn-cooldown {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--pet-color, #6bcb77);
+    opacity: .5;
+    transition: width .1s linear;
+    border-radius: 0 0 12px 12px;
+}
+
+/* ── SELEÇÃO DE BICHINHO ──────────────────────────── */
+.pet-select-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 20, 10, .85);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.pet-select-overlay.hidden {
+    display: none;
+}
+
+.select-box {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+}
+
+.select-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    text-align: center;
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.select-sub {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.pet-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+@media(min-width:360px) {
+    .pet-options {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+.pet-option {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 6px;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.pet-option:hover {
+    border-color: var(--oc);
+    transform: translateY(-2px);
+}
+
+.pet-option.selected {
+    border-color: var(--oc);
+    background: var(--card);
+    box-shadow: 0 0 0 1px var(--oc);
+}
+
+.pet-option svg {
+    image-rendering: pixelated;
+}
+
+.pet-option-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 5px;
+    color: var(--muted);
+}
+
+.pet-option.selected .pet-option-name {
+    color: var(--oc);
+}
+
+.name-input-wrap {
+    margin-bottom: 14px;
+}
+
+.name-input-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.name-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+}
+
+.name-input:focus {
+    border-color: var(--accent);
+}
+
+.btn-start {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--accent), #ff6b1a);
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #fff;
+    letter-spacing: 1px;
+    transition: all .15s;
+    box-shadow: 0 4px 16px rgba(255, 140, 66, .35);
+}
+
+.btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 140, 66, .45);
+}
+
+/* ── TELA DE MORTE ────────────────────────────────── */
+.death-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    background: rgba(10, 8, 20, .92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 13px;
+    text-align: center;
+    padding: 20px;
+}
+
+.death-overlay.hidden {
+    display: none;
+}
+
+.death-skull {
+    font-size: 36px;
+    margin-bottom: 4px;
+}
+
+.death-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #cc8888;
+}
+
+.death-age {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.btn-restart {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: rgba(255, 100, 100, .2);
+    border: 1px solid rgba(255, 100, 100, .4);
+    border-radius: 8px;
+    color: #ff9999;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    transition: all .15s;
+}
+
+.btn-restart:hover {
+    background: rgba(255, 100, 100, .3);
+}
+
+/* ── BOTTOM META ──────────────────────────────────── */
+.meta-bar {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    width: 100%;
+    max-width: 380px;
+}
+
+.age-label {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.age-val {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--text);
+}
+
+.records-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--muted);
+    transition: all .15s;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+}
+
+.records-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+/* ── RECORDES ─────────────────────────────────────── */
+.records-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 20, 10, .85);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.records-overlay.hidden {
+    display: none;
+}
+
+.records-box {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 380px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.records-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.record-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.record-rank {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--muted);
+    width: 20px;
+}
+
+.record-info {
+    flex: 1;
+}
+
+.record-name {
+    font-weight: 700;
+}
+
+.record-age {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.records-empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 20px 0;
+}
+
+.btn-close-records {
+    margin-top: 16px;
+    width: 100%;
+    padding: 10px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--muted);
+    transition: all .15s;
+}
+
+.btn-close-records:hover {
+    border-color: var(--text);
+    color: var(--text);
+}
+
+/* ── LOJA & INVENTÁRIO ────────────────────────────── */
+.shop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 20, 10, .85);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.shop-overlay.hidden {
+    display: none;
+}
+
+.shop-box {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    border-bottom: 2px solid var(--bg);
+    padding-bottom: 10px;
+}
+
+.shop-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+}
+
+.shop-money {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #f9e04b;
+}
+
+.shop-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+}
+
+.shop-item:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.item-icon {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: 800;
+    font-size: 14px;
+    display: block;
+}
+
+.item-desc {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.btn-buy {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #cc6a2e;
+}
+
+.btn-buy:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #cc6a2e;
+}
+
+.btn-buy:disabled {
+    background: #ccc;
+    box-shadow: 0 4px 0 #999;
+    cursor: not-allowed;
+}
+
+/* ── ANIMAÇÕES DO SPRITE ──────────────────────────── */
+@keyframes petBounce {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1)
+    }
+
+    50% {
+        transform: translateY(-8px) scale(1.05)
+    }
+}
+
+@keyframes petSway {
+
+    0%,
+    100% {
+        transform: rotate(-4deg)
+    }
+
+    50% {
+        transform: rotate(4deg)
+    }
+}
+
+@keyframes petPulse {
+
+    0%,
+    100% {
+        transform: scale(1)
+    }
+
+    50% {
+        transform: scale(.93)
+    }
+}
+
+@keyframes petWiggle {
+
+    0%,
+    100% {
+        transform: rotate(0)
+    }
+
+    25% {
+        transform: rotate(-8deg)
+    }
+
+    75% {
+        transform: rotate(8deg)
+    }
+}
+
+@keyframes petShake {
+
+    0%,
+    100% {
+        transform: translateX(0)
+    }
+
+    25% {
+        transform: translateX(-4px)
+    }
+
+    75% {
+        transform: translateX(4px)
+    }
+}
+
+.pet-sprite.anim-bounce {
+    animation: petBounce .7s ease-in-out infinite;
+}
+
+.pet-sprite.anim-sway {
+    animation: petSway 2s ease-in-out infinite;
+}
+
+.pet-sprite.anim-pulse {
+    animation: petPulse 1.5s ease-in-out infinite;
+}
+
+.pet-sprite.anim-wiggle {
+    animation: petWiggle .5s ease-in-out infinite;
+}
+
+.pet-sprite.anim-shake {
+    animation: petShake .3s ease-in-out 3;
+}
+
+/* CSS EXTRA — minigame + health crítico */
+@keyframes burstUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-38px) scale(.7)
+    }
+}
+
+#barHealth.critical {
+    animation: hPulse .8s ease-in-out infinite;
+}
+
+@keyframes hPulse {
+
+    0%,
+    100% {
+        opacity: 1
+    }
+
+    50% {
+        opacity: .35
+    }
+}
